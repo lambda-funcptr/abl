@@ -1,0 +1,2 @@
+LABEL=ABLBOOT               /boot                   vfat        defaults,ro         0   1
+#/boot/abl/extra.squashfs    /mnt/abl-extra          squashfs    defaults,ro         0   3

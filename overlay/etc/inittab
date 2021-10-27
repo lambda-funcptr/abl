@@ -1,0 +1,24 @@
+# /etc/inittab
+
+# Set up pseudo-filesystem mounts.
+::sysinit:/bin/mount -t proc -o nosuid,noexec,nodev proc /proc
+::sysinit:/bin/mount -t sysfs -o nosuid,noexec,nodev sysfs /sys
+
+::sysinit:/sbin/openrc sysinit
+::sysinit:/sbin/openrc boot
+::wait:/sbin/openrc defaults
+
+# Put a getty on the serial port
+ttyS0::once:-/var/lib/abl/scripts/print-boottime.sh
+ttyS0::respawn:-/bin/sh
+
+# Set up a couple of getty's
+tty1::once:/usr/bin/clear
+tty1::respawn:/sbin/getty 38400 tty1 -n -l /sbin/bootmenu
+tty2::respawn:/sbin/getty 38400 tty2
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+::shutdown:/sbin/openrc shutdown

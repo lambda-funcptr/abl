@@ -1,0 +1,9 @@
+export apk_repo="http://dl-cdn.alpinelinux.org/alpine/"
+
+export apk_version="2.12.7-r0"
+export apk_tarball="${apk_repo}latest-stable/main/x86_64/apk-tools-static-${apk_version}.apk"
+
+export kernel_version="5.14.14"
+export kernel_tarball="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$kernel_version.tar.xz"
+
+export abl_pkgs="gcompat kexec-tools ncurses-libs efibootmgr util-linux mdadm cryptsetup lvm2"
