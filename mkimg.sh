@@ -63,7 +63,7 @@ boostrap_image() {
     image_apk_strap add ${abl_pkgs}
 
     echo "Patching bootroot with custom modifications..."
-    sudo cp -fr "${abl_workdir}/overlay/" "${abl_workdir}/build/root"
+    sudo rsync -a --chown root:root "${abl_workdir}/overlay/" "${abl_workdir}/build/root"
 
     echo "Configuring open-rc init tasks"
     image_chroot_exec 'rc-update add mdev sysinit'
