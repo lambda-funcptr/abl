@@ -1,12 +1,15 @@
-#include <ncurses.h>
-
 #include <string.h>
+
+#include <ncurses.h>
+#include<chibi/eval.h>
 
 char* menu_title = "< ABL Menu >";
 char* help_string = "< Help [F1] | REPL [F9] | Select [Enter] >";
 
 int main(int argc, char** argv) {
     bool shutdown = false;
+
+    sexp_scheme_init();
 
     initscr();
     start_color();
@@ -37,8 +40,16 @@ int main(int argc, char** argv) {
         
         int input = getch();
 
-        if (strncmp("^C", keyname(input), 2) == 0) {
+        if (strncmp(keyname(input), "^C", 2) == 0) {
             break;
+        } else if (strncmp(keyname(input), "F1", 2) == 0) {
+            // Print help here
+
+            continue;
+        } else if (strncmp(keyname(input), "F9", 2) == 0) {
+            // Open up the REPL/config CLI
+
+            continue;
         }
     }
 
