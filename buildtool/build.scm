@@ -11,17 +11,20 @@
 (import (srfi 130))
 
 (define pkg-list 
-  '("alpine-base"
-    "busybox"
-    "cpio"
-    "cryptsetup"
-    "efibootmgr"
-    "gcompat"
-    "kexec-tools"
-    "lvm2"
-    "mdadm"
-    "ncurses-libs"
-    "util-linux"))
+  '(alpine-base
+    busybox
+    cpio
+    cryptsetup
+    efibootmgr
+    gcompat
+    kbd
+    kexec-tools
+    lvm2
+    mdadm
+    mg
+    ncurses-libs
+    terminus-font
+    util-linux))
 
 (define (clone-kernel-sources)
   (begin
@@ -46,8 +49,11 @@
       (system '(cp /opt/abl/kernel.config /tmp/dist/linux/.config))
       (system '(cp /opt/abl/kernel.config /tmp/dist/kernel.config))
       (with-directory "/tmp/dist/linux"
-        (lambda ()
-          (system '(make oldconfig))))
+        (lambda () 
+          (and
+            (system '(make oldconfig))
+            (system? '(make prepare)))))
+          
       (cfg-kernel interactive))
     (if interactive
       (with-directory "/tmp/dist/linux"
@@ -55,6 +61,7 @@
           (begin
             (system '(make menuconfig))
             (system '(make oldconfig))
+            (system '(make prepare))
             (system '(cp /tmp/dist/linux/.config /tmp/dist/kernel.config))
             (display "New configs saved to dist/kernel.config") (newline))))
         #f)))
@@ -67,12 +74,18 @@
 (define (build-kernel?) 
   (with-directory "/tmp/dist/linux"
     (lambda ()
-      (system? '(make)))))
+      (and
+        (system? '(make prepare))
+        (system? '(make vmlinux))
+        (system? '(make modules_prepare))
+        (system? '(make modules))
+        (system? '(make INSTALL_MOD_PATH=/tmp/abl modules_install))
+        (system? '(make))))))
 
 (define (apk-init)
   (begin
-    (when 
-      (not 
+    (when
+      (not
         (and
           (create-directory* "/tmp/abl/etc/apk")
           (system? '(cp /etc/apk/repositories /tmp/abl/etc/apk/repositories)) 
@@ -89,6 +102,9 @@
 (define (chroot-shell? cmd)
   (system? "chroot" "/tmp/abl" "/bin/sh" "-c" (string-append "source /etc/profile; " cmd)))
 
+(define (build-bootmenu?)
+  (system? '(sh /opt/abl/go/build.sh)))
+
 (define (cmd-build-abl value cmdinfo)
   (begin
     (display ">>> Setting up kernel sources...") (newline)
@@ -101,10 +117,14 @@
     (display ">>> Applying ABL userspace...") (newline)
     (system '(rsync -avr /opt/abl/overlay/ /tmp/abl/)) (newline)
     (chroot-shell? "rc-update add mdev sysinit")
-    (chroot-shell? "rc-update add syslog boot")
+    (chroot-shell? "rc-update add consolefont sysinit")
     (chroot-shell? "rc-update add mount-ro shutdown")
     (chroot-shell? "rc-update add killprocs shutdown")
-    (display ">>> Building Kernel...") (newline)
+    (display ">>> Building bootmenu binary...") (newline)
+    (unless (build-bootmenu?)
+      (display "!!! Failed to build bootmenu!") (newline)
+      (exit 1))
+    (display ">>> Building kernel...") (newline)
     (unless (build-kernel?)
       (display "!!! Failed to build kernel!") (newline)
       (exit 1))
