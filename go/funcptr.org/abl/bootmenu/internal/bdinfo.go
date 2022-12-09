@@ -17,7 +17,7 @@ func parseBlkidLine(line string) map[string]string {
 		tag, value, _ := strings.Cut(tag, "=")
 		value_inner := strings.Trim(value, "\" ")
 
-		if tag == "BLOCK_SIZE" {
+		if tag == "BLOCK_SIZE" || tag == "UUID" {
 			continue
 		}
 
