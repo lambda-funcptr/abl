@@ -15,8 +15,8 @@ func UnlockVolume(volume map[string]string) map[string]string {
 
 	cmd := exec.Command("cryptsetup", "luksOpen", volume["PATH"], "ABL")
 	cmd.Stdin = os.Stdin
-    cmd.Stdout = os.Stdout
-    cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 
 	var bdentries []string
