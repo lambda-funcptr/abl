@@ -2,7 +2,6 @@ package bootmenu
 
 import (
 	"fmt"
-	"path/filepath"
 	"os/exec"
 	"os"
 	"strings"
@@ -33,9 +32,9 @@ func UnlockVolume(volume map[string]string) map[string]string {
 }
 
 func MountVolume(volume map[string]string) bool {
-	_ = os.MkdirAll(filepath.Dir("/mnt/abl"), os.ModePerm)
+	_ = os.MkdirAll("/mnt/abl", 0700)
 
-	err := syscall.Mount(volume["PATH"], "/mnt/abl", volume["TYPE"], 0x1, "")
+	err := syscall.Mount(volume["PATH"], "/mnt/abl", volume["TYPE"], 0, "")
 
 	return err == nil
 }
