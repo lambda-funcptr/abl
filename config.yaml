@@ -1,0 +1,35 @@
+#
+# This is an example summit project build config
+# 
+---
+
+name: abl
+
+packages:
+  - alpine-base
+  - busybox
+  - cpio
+  - cryptsetup
+  - efibootmgr
+  - gcompat
+  - kbd
+  - kexec-tools
+  - lvm2
+  - mdadm
+  - mg
+  - ncurses-libs
+  - terminus-font
+  - util-linux
+
+tasks:
+  - name: Apply configuration
+    copy:
+      src: overlay/
+      dest: /
+  - name: Set hostname to localhost
+    chroot: hostname localhost
+
+images:
+  - initramfs:
+      compression: zstd --fast
+      dest: initramfs.zstd
