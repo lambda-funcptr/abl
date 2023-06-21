@@ -24,10 +24,16 @@ packages:
 tasks:
   - name: Apply configuration
     copy:
-      src: overlay/
+      src: overlay/.
       dest: /
-  - name: Set hostname to localhost
-    chroot: hostname localhost
+  - name: Enable mdev at boot
+    chroot: rc-update add mdev sysinit
+  - name: Copy over the ABL bootmenu binary
+    copy:
+      src: dist/bootmenu
+      dest: /sbin/bootmenu
+  - name: Make sure the binary we just copied is executable
+    chroot: chmod o+x /sbin/bootmenu
 
 images:
   - initramfs:
