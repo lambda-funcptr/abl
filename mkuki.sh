@@ -1,5 +1,5 @@
 #!/bin/sh
-echo ">>> Generating UKI (Generic)"
+echo ">>> Generating UKI (generic)"
 efi-mkuki -c /config/cmdline -o /output/abl.efi /output/linux/arch/x86_64/boot/bzImage /output/initramfs.zstd
 
 for ucode_arch in amd-ucode intel-ucode; do
