@@ -32,9 +32,16 @@ func UnlockVolume(volume map[string]string) map[string]string {
 }
 
 func MountVolume(volume map[string]string) bool {
-	_ = os.MkdirAll("/mnt/abl", 0700)
+	_ = os.MkdirAll("/mnt/boot", 0700)
 
-	err := syscall.Mount(volume["PATH"], "/mnt/abl", volume["TYPE"], 0, "")
+	_ = syscall.Unmount("/mnt/boot", 0) // Throw an unmount in, we don't care if it doesn't work...
+
+	err := syscall.Mount(volume["PATH"], "/mnt/boot", volume["TYPE"], 0, "")
+
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Unable to mount: %s", volume["PATH"]))
+		fmt.Println(fmt.Sprintf("ERROR: %s", err))
+	}
 
 	return err == nil
 }
