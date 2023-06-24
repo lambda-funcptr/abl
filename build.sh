@@ -17,4 +17,6 @@ echo ">>> Building UKI..."
 
 podman run --privileged -v $(pwd):/config:ro -v $(pwd)/dist:/output -it $(podman build -q -f mkuki.dockerfile)
 
+bash mktest.sh
+
 popd > /dev/null
