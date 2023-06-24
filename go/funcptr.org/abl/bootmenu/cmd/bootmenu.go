@@ -62,4 +62,7 @@ func main() {
 		fmt.Println("Unable to mount ABL boot volume!")
 		os.Exit(1)
 	}
+
+	boot_options := bootmenu.ListCfg()
+	bootmenu.SelectBootOption(boot_options)
 }

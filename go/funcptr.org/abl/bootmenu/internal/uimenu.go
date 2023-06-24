@@ -41,3 +41,8 @@ func SelectBootVolume(devices []map[string]string) map[string]string {
 
 	return nil
 }
+
+func SelectBootOption(options []string) string {
+	result, _ := pterm.DefaultInteractiveSelect.WithOptions(options).Show("Boot Entries:")
+	return result
+}
