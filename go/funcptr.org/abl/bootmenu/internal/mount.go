@@ -36,7 +36,10 @@ func MountVolume(volume map[string]string) bool {
 
 	_ = syscall.Unmount("/mnt/boot", 0) // Throw an unmount in, we don't care if it doesn't work...
 
-	err := syscall.Mount(volume["PATH"], "/mnt/boot", volume["TYPE"], syscall.MS_RDONLY, "")
+	// We don't want to allow reads, atime, and certainly not exec from these files
+	mount_opts := uintptr(syscall.MS_RDONLY | syscall.MS_NOATIME | syscall.MS_NOEXEC)
+
+	err := syscall.Mount(volume["PATH"], "/mnt/boot", volume["TYPE"], mount_opts, "")
 
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Unable to mount: %s", volume["PATH"]))
@@ -45,6 +48,7 @@ func MountVolume(volume map[string]string) bool {
 
 	if _, err := os.Stat("/mnt/boot/abl/"); os.IsNotExist(err) {
 		fmt.Println(fmt.Sprintf("%s does not contain a valid abl directory.", volume["PATH"]))
+		_ = syscall.Unmount("/mnt/boot", 0)
 		return false
 	}
 
