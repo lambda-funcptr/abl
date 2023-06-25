@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source .config
+
 set -e
 
 pushd $(dirname $0) > /dev/null
@@ -11,11 +13,11 @@ bash go/build.sh
 
 echo ">>> Building initramfs image..."
 
-podman run --privileged -v $(pwd):/config:ro -v $(pwd)/dist:/output -it funcptr/summitkit
+${CRI} run --privileged -v $(pwd):/config:ro -v $(pwd)/dist:/output -it funcptr/summitkit
 
 echo ">>> Building UKI..."
 
-podman run --privileged -v $(pwd):/config:ro -v $(pwd)/dist:/output -it $(podman build -q -f mkuki.dockerfile)
+${CRI} run --privileged -v $(pwd):/config:ro -v $(pwd)/dist:/output -it $(podman build -q -f mkuki.dockerfile)
 
 bash mktest.sh
 
