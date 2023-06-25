@@ -8,6 +8,8 @@ pushd $(dirname $0) > /dev/null
 
 mkdir -p dist
 
+echo ">>> Building go binary..."
+
 # build the go binary...
 bash go/build.sh
 
